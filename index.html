@@ -1,66 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {font-kerning: none}
-    span.s2 {font: 12.0px 'Apple Color Emoji'; font-kerning: none}
+  <meta charset="UTF-8">
+  <title>Guess the Number</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      text-align: center;
+      padding-top: 80px;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 1.2em;
+    }
+    input[type="number"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+      width: 160px;
+      margin: 10px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #fff;
+      color: #2575fc;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #e6e6e6;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+    #chances {
+      margin-top: 10px;
+      font-size: 1.1em;
+    }
+    .card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;Guess the Number&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Guess the Number Game&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p&gt;I have chosen a number between 1 and 100. You have 5 chances. Good luck!&lt;/p&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;input type="number" id="guessInput" placeholder="Enter your guess"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;button onclick="checkGuess()"&gt;Guess&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p id="result"&gt;&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p id="chances"&gt;&lt;/p&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const secretNumber = 47;<span class="Apple-converted-space">  </span>// fixed number</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let chancesLeft = 5;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function checkGuess() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const guess = Number(document.getElementById("guessInput").value);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const result = document.getElementById("result");</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const chances = document.getElementById("chances");</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (chancesLeft &lt;= 0) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>result.textContent = "Game over! You already used all your chances.";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>chancesLeft--;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (guess === secretNumber) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>result.textContent = "</span><span class="s2">🎉</span><span class="s1"> Correct! You guessed the number!";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>chances.textContent = "";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>} else if (chancesLeft === 0) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>result.textContent = "</span><span class="s2">❌</span><span class="s1"> Wrong! You failed. The number was " + secretNumber + ".";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>chances.textContent = "No chances left.";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>} else if (guess &lt; secretNumber) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>result.textContent = "Too low! Guess higher.";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>chances.textContent = "Chances left: " + chancesLeft;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>result.textContent = "Too high! Guess lower.";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>chances.textContent = "Chances left: " + chancesLeft;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+  <div class="card">
+    <h1>Guess the Number Game</h1>
+    <p>I have chosen a number between 1 and 100.<br>You have 5 chances. Good luck!</p>
+
+    <input type="number" id="guessInput" placeholder="Enter your guess" min="1" max="100">
+    <button onclick="checkGuess()">Guess</button>
+
+    <p id="result"></p>
+    <p id="chances"></p>
+  </div>
+
+  <script>
+    const secretNumber = 52;  // fixed number
+    let chancesLeft = 5;
+
+    const result = document.getElementById("result");
+    const chances = document.getElementById("chances");
+    chances.textContent = "Chances left: " + chancesLeft;
+
+    function checkGuess() {
+      if (chancesLeft <= 0) {
+        result.textContent = "Game over! You already used all your chances.";
+        return;
+      }
+
+      const guess = Number(document.getElementById("guessInput").value);
+      chancesLeft--;
+
+      if (guess === secretNumber) {
+        result.textContent = "🎉 Correct! You guessed the number!";
+        chances.textContent = "";
+      } else if (chancesLeft === 0) {
+        result.textContent = "❌ Wrong! The number was " + secretNumber + ".";
+        chances.textContent = "No chances left.";
+      } else if (guess < secretNumber) {
+        result.textContent = "Too low! Guess higher.";
+        chances.textContent = "Chances left: " + chancesLeft;
+      } else {
+        result.textContent = "Too high! Guess lower.";
+        chances.textContent = "Chances left: " + chancesLeft;
+      }
+    }
+  </script>
 </body>
 </html>
