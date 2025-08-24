@@ -32,14 +32,23 @@
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    body { 
-      margin: 0; 
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--text); 
-      background: radial-gradient(1200px 800px at 10% -10%, var(--bg1), transparent 60%), radial-gradient(1200px 800px at 110% 10%, var(--bg2), transparent 60%), linear-gradient(120deg, #0ea5e92a, #8b5cf62a); 
-      background-attachment: fixed; 
-      display: grid; 
-      place-items: center; 
-      padding: 24px; 
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 10% -10%, var(--bg1), transparent 60%),
+                  radial-gradient(1200px 800px at 110% 10%, var(--bg2), transparent 60%),
+                  linear-gradient(120deg, #0ea5e92a, #8b5cf62a);
+      background-attachment: fixed;
+    
+      /* Center card safely */
+      display: flex;
+      justify-content: center;   /* horizontal center */
+      align-items: center;       /* vertical center */
+      min-height: 100vh;
+    
+      padding: 24px;
+      box-sizing: border-box;
     }
     .card {
       width: 100%;
