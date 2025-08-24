@@ -6,6 +6,7 @@
   <title>Guess the Number</title>
   <meta name="color-scheme" content="light dark" />
   <style>
+    /* ---------- Theme ---------- */
     :root {
       --bg1: #0ea5e9;
       --bg2: #8b5cf6;
@@ -30,32 +31,34 @@
         --shadow: 0 10px 30px rgba(0,0,0,.5);
       }
     }
+
+    /* ---------- Layout hardening (prevents “half-box cut” & left drift) ---------- */
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    html { overflow-x: hidden; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color: var(--text);
-      background: radial-gradient(1200px 800px at 10% -10%, var(--bg1), transparent 60%),
-                  radial-gradient(1200px 800px at 110% 10%, var(--bg2), transparent 60%),
-                  linear-gradient(120deg, #0ea5e92a, #8b5cf62a);
-      background-attachment: fixed;
-    
-      /* Hard center the card */
-      min-height: 100svh;          /* use small-viewport units to avoid toolbar jumps */
+    html, body { overflow-x: clip; }           /* kill horizontal scroll on all browsers */
+    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--text); }
+
+    /* Use a dedicated page container for centering + background.
+       Grid centers the card; if card grows taller than the viewport,
+       overflow-y:auto lets the page scroll instead of clipping. */
+    .page {
+      min-height: 100svh;                      /* viewport-height safe on mobile */
       display: grid;
-      place-items: center;
-    
+      place-items: center;                     /* truly center horizontally & vertically */
       padding: 24px;
-      box-sizing: border-box;
-    
-      /* stop any sideways scroll pushing the card off-screen */
-      overflow-x: hidden;
+      overflow-y: auto;                        /* allow vertical scroll if content is tall */
+      background:
+        radial-gradient(1200px 800px at 10% -10%, var(--bg1), transparent 60%),
+        radial-gradient(1200px 800px at 110% 10%, var(--bg2), transparent 60%),
+        linear-gradient(120deg, #0ea5e92a, #8b5cf62a);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      background-size: cover;
     }
+
+    /* ---------- Card ---------- */
     .card {
-      width: 100%;
-      max-width: 680px;
+      width: min(680px, calc(100vw - 48px));   /* always fit in viewport width */
       background: var(--card);
       backdrop-filter: blur(10px);
       border-radius: var(--radius);
@@ -77,11 +80,9 @@
       pointer-events: none;
       opacity: .35;
     }
-    header h1 {
-      margin: 0 0 6px;
-      font-size: clamp(24px, 3vw, 32px);
-      letter-spacing: .2px;
-    }
+
+    /* ---------- Typography & controls ---------- */
+    header h1 { margin: 0 0 6px; font-size: clamp(24px, 3vw, 32px); letter-spacing: .2px; }
     .lead { margin: 0 0 16px; color: var(--muted); }
     .row {
       display: grid;
@@ -118,109 +119,84 @@
     button:active { transform: translateY(1px); }
     .primary { background: linear-gradient(120deg, var(--accent), var(--accent-2)); color: #fff; box-shadow: 0 6px 16px rgba(37,99,235,.35); }
     button:disabled, input:disabled { opacity: .6; cursor: not-allowed; }
-    .hint {
-      min-height: 28px;
-      margin-top: 12px;
-      font-weight: 650;
-      letter-spacing: .2px;
-    }
+
+    .hint { min-height: 28px; margin-top: 12px; font-weight: 650; letter-spacing: .2px; }
     .hint.pop { animation: pop .25s ease; }
     @keyframes pop { 0% { transform: scale(.98); opacity: .5; } 100% { transform: scale(1); opacity: 1; } }
+
     .meta { margin-top: 8px; color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .tries { display: inline-flex; gap: 6px; --size: 12px; }
     .dot { width: var(--size); height: var(--size); border-radius: 999px; background: #e5e7eb; }
     .dot.used { background: #fca5a5; }
     .dot.left { background: #a7f3d0; }
+
     .progress { position: relative; width: 100%; height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 14px; }
     .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s ease; }
+
     footer { margin-top: 18px; font-size: 12px; color: var(--muted); }
 
-    /* --- History styles (lightweight, matches your card) --- */
-    .history {
-      margin-top: 14px;
-      border-top: 1px dashed rgba(0,0,0,.12);
-      padding-top: 12px;
-    }
-    @media (prefers-color-scheme: dark) {
-      .history { border-top-color: rgba(255,255,255,.18); }
-    }
-    .history h2 {
-      margin: 0 0 8px;
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 600;
-      letter-spacing: .2px;
-    }
-    .history-list {
-      display: grid;
-      grid-template-columns: 56px 1fr 1fr;
-      gap: 8px 12px;
-      align-items: center;
-      font-size: 14px;
-    }
-    .history-list .hdr {
-      color: var(--muted);
-      font-weight: 600;
-    }
-    .pill-mini {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      line-height: 1;
-      color: #fff;
-    }
+    /* ---------- History (previous guesses) ---------- */
+    .history { margin-top: 14px; border-top: 1px dashed rgba(0,0,0,.12); padding-top: 12px; }
+    @media (prefers-color-scheme: dark) { .history { border-top-color: rgba(255,255,255,.18); } }
+    .history h2 { margin: 0 0 8px; font-size: 14px; color: var(--muted); font-weight: 600; letter-spacing: .2px; }
+    .history-list { display: grid; grid-template-columns: 56px 1fr 1fr; gap: 8px 12px; align-items: center; font-size: 14px; }
+    .history-list .hdr { color: var(--muted); font-weight: 600; }
+    .pill-mini { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; line-height: 1; color: #fff; }
     .pill-high { background: var(--accent); }
     .pill-low { background: var(--accent-2); }
     .pill-correct { background: var(--good); }
+
+    /* ---------- Confetti canvas ---------- */
+    .confetti { position: fixed; inset: 0; pointer-events: none; }
   </style>
 </head>
 <body>
-  <div class="card" role="main" aria-labelledby="title">
-    <header>
-      <h1 id="title">Guess the Number</h1>
-      <p class="lead">I picked a number between <strong>0</strong> and <strong>100</strong>. You have <strong>5</strong> tries.</p>
-    </header>
+  <div class="page">
+    <div class="card" role="main" aria-labelledby="title">
+      <header>
+        <h1 id="title">Guess the Number</h1>
+        <p class="lead">I picked a number between <strong>0</strong> and <strong>100</strong>. You have <strong>5</strong> tries.</p>
+      </header>
 
-    <div class="row">
-      <label for="guess" class="sr-only" style="position:absolute;left:-10000px;">Enter your guess</label>
-      <input id="guess" type="number" min="0" max="100" placeholder="Enter 0–100" inputmode="numeric" />
-      <button id="btn-guess" class="primary" title="Submit your guess">Guess</button>
-    </div>
-
-    <div class="hint" id="hint" aria-live="polite"></div>
-
-    <div class="meta">
-      <span id="status">New round. Good luck!</span>
-      <span class="tries" id="tries" aria-label="Tries indicator"></span>
-    </div>
-
-    <div class="progress" aria-hidden="true">
-      <div class="bar" id="bar"></div>
-    </div>
-
-    <!-- New: Previous guesses -->
-    <section class="history" aria-live="polite" aria-label="Previous guesses">
-      <h2>Previous guesses</h2>
-      <div class="history-list" id="historyList">
-        <div class="hdr">Try</div>
-        <div class="hdr">Guess</div>
-        <div class="hdr">Result</div>
-        <!-- rows injected here -->
+      <div class="row">
+        <label for="guess" class="sr-only" style="position:absolute;left:-10000px;">Enter your guess</label>
+        <input id="guess" type="number" min="0" max="100" placeholder="Enter 0–100" inputmode="numeric" />
+        <button id="btn-guess" class="primary" title="Submit your guess">Guess</button>
       </div>
-    </section>
 
-    <footer>Tip: Press <kbd>Enter</kbd> to submit your guess.</footer>
+      <div class="hint" id="hint" aria-live="polite"></div>
+
+      <div class="meta">
+        <span id="status">New round. Good luck!</span>
+        <span class="tries" id="tries" aria-label="Tries indicator"></span>
+      </div>
+
+      <div class="progress" aria-hidden="true">
+        <div class="bar" id="bar"></div>
+      </div>
+
+      <section class="history" aria-live="polite" aria-label="Previous guesses">
+        <h2>Previous guesses</h2>
+        <div class="history-list" id="historyList">
+          <div class="hdr">Try</div>
+          <div class="hdr">Guess</div>
+          <div class="hdr">Result</div>
+          <!-- rows injected here -->
+        </div>
+      </section>
+
+      <footer>Tip: Press <kbd>Enter</kbd> to submit your guess.</footer>
+    </div>
   </div>
 
-  <canvas class="confetti" id="confetti" width="0" height="0"></canvas>
+  <canvas class="confetti" id="confetti"></canvas>
 
   <script>
     (() => {
-      const SECRET = 52; // fixed number
+      const SECRET = 52;         // fixed number
       const MAX_TRIES = 5;
       let tries = 0;
-      const history = []; // {n, guess, result: 'Higher'|'Lower'|'Correct'}
+      const history = [];        // { n, guess, result: 'Higher'|'Lower'|'Correct' }
 
       const $ = (id) => document.getElementById(id);
       const input = $('guess');
@@ -248,13 +224,12 @@
       function popHint(text, color) {
         hint.textContent = text;
         hint.style.color = color || 'inherit';
-        hint.classList.remove('pop');
+        hint.classList.remove('pop'); // restart animation
         void hint.offsetWidth;
         hint.classList.add('pop');
       }
 
       function addHistoryRow(n, guess, result) {
-        // row: Try#, Guess value, Result pill
         const tryEl = document.createElement('div');
         tryEl.textContent = n;
 
@@ -277,7 +252,6 @@
       }
 
       function renderHistory() {
-        // Clear rows but keep headers (first 3 children)
         while (historyList.children.length > 3) {
           historyList.removeChild(historyList.lastChild);
         }
@@ -331,14 +305,25 @@
       btnGuess.addEventListener('click', check);
       input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
 
-      // Confetti
+      /* ---------- Confetti (fixed canvas; no horizontal overflow) ---------- */
       const canvas = document.getElementById('confetti');
       const ctx = canvas.getContext('2d');
       let confettiPieces = [];
       let raf = null;
-      function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-      window.addEventListener('resize', resize);
-      resize();
+
+      function sizeCanvas() {
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        const w = Math.floor(window.innerWidth);
+        const h = Math.floor(window.innerHeight);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      window.addEventListener('resize', sizeCanvas);
+      sizeCanvas();
+
       function fireConfetti() {
         confettiPieces = Array.from({ length: 120 }, () => ({
           x: Math.random() * canvas.width,
