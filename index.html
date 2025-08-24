@@ -125,7 +125,45 @@
     .progress { position: relative; width: 100%; height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 14px; }
     .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s ease; }
     footer { margin-top: 18px; font-size: 12px; color: var(--muted); }
-    .confetti { position: fixed; inset: 0; pointer-events: none; }
+
+    /* --- History styles (lightweight, matches your card) --- */
+    .history {
+      margin-top: 14px;
+      border-top: 1px dashed rgba(0,0,0,.12);
+      padding-top: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .history { border-top-color: rgba(255,255,255,.18); }
+    }
+    .history h2 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+    .history-list {
+      display: grid;
+      grid-template-columns: 56px 1fr 1fr;
+      gap: 8px 12px;
+      align-items: center;
+      font-size: 14px;
+    }
+    .history-list .hdr {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .pill-mini {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      line-height: 1;
+      color: #fff;
+    }
+    .pill-high { background: var(--accent); }
+    .pill-low { background: var(--accent-2); }
+    .pill-correct { background: var(--good); }
   </style>
 </head>
 <body>
@@ -152,6 +190,17 @@
       <div class="bar" id="bar"></div>
     </div>
 
+    <!-- New: Previous guesses -->
+    <section class="history" aria-live="polite" aria-label="Previous guesses">
+      <h2>Previous guesses</h2>
+      <div class="history-list" id="historyList">
+        <div class="hdr">Try</div>
+        <div class="hdr">Guess</div>
+        <div class="hdr">Result</div>
+        <!-- rows injected here -->
+      </div>
+    </section>
+
     <footer>Tip: Press <kbd>Enter</kbd> to submit your guess.</footer>
   </div>
 
@@ -162,6 +211,7 @@
       const SECRET = 52; // fixed number
       const MAX_TRIES = 5;
       let tries = 0;
+      const history = []; // {n, guess, result: 'Higher'|'Lower'|'Correct'}
 
       const $ = (id) => document.getElementById(id);
       const input = $('guess');
@@ -170,6 +220,7 @@
       const status = $('status');
       const triesBox = $('tries');
       const bar = $('bar');
+      const historyList = $('historyList');
 
       function renderDots() {
         triesBox.innerHTML = '';
@@ -193,6 +244,37 @@
         hint.classList.add('pop');
       }
 
+      function addHistoryRow(n, guess, result) {
+        // row: Try#, Guess value, Result pill
+        const tryEl = document.createElement('div');
+        tryEl.textContent = n;
+
+        const guessEl = document.createElement('div');
+        guessEl.textContent = guess;
+
+        const resEl = document.createElement('div');
+        const pill = document.createElement('span');
+        pill.className = 'pill-mini ' + (
+          result === 'Correct' ? 'pill-correct' :
+          result === 'Higher'  ? 'pill-high' :
+                                 'pill-low'
+        );
+        pill.textContent = result;
+        resEl.appendChild(pill);
+
+        historyList.appendChild(tryEl);
+        historyList.appendChild(guessEl);
+        historyList.appendChild(resEl);
+      }
+
+      function renderHistory() {
+        // Clear rows but keep headers (first 3 children)
+        while (historyList.children.length > 3) {
+          historyList.removeChild(historyList.lastChild);
+        }
+        history.forEach(item => addHistoryRow(item.n, item.guess, item.result));
+      }
+
       function endGame(win) {
         input.disabled = true;
         btnGuess.disabled = true;
@@ -207,6 +289,7 @@
           popHint('Please enter a whole number between 0 and 100.', 'var(--warning)');
           return;
         }
+
         tries += 1;
         renderDots();
         setBar();
@@ -214,19 +297,25 @@
         if (v === SECRET) {
           popHint('🎉 Correct! The number is 52.', 'var(--good)');
           status.textContent = `Attempts used: ${tries}`;
+          history.push({ n: tries, guess: v, result: 'Correct' });
+          renderHistory();
           endGame(true);
           return;
         }
 
         const left = MAX_TRIES - tries;
+        const relation = v < SECRET ? 'Higher' : 'Lower';
+        popHint(v < SECRET ? 'Too low — guess higher.' : 'Too high — guess lower.', 'var(--accent)');
+        status.textContent = left === 1 ? 'Last chance!' : `Chances left: ${left}`;
+        history.push({ n: tries, guess: v, result: relation });
+        renderHistory();
+
         if (left === 0) {
           popHint('❌ Wrong! You failed. The number was 52.', 'var(--bad)');
           endGame(false);
           return;
         }
 
-        popHint(v < SECRET ? 'Too low — guess higher.' : 'Too high — guess lower.', 'var(--accent)');
-        status.textContent = `Chances left: ${left}`;
         input.select();
       }
 
@@ -268,6 +357,10 @@
         });
         raf = requestAnimationFrame(tick);
       }
+
+      // boot
+      renderDots();
+      setBar();
     })();
   </script>
 </body>
