@@ -32,6 +32,7 @@
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
+    html { overflow-x: hidden; }
     body {
       margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -41,14 +42,16 @@
                   linear-gradient(120deg, #0ea5e92a, #8b5cf62a);
       background-attachment: fixed;
     
-      /* Center card safely */
-      display: flex;
-      justify-content: center;   /* horizontal center */
-      align-items: center;       /* vertical center */
-      min-height: 100vh;
+      /* Hard center the card */
+      min-height: 100svh;          /* use small-viewport units to avoid toolbar jumps */
+      display: grid;
+      place-items: center;
     
       padding: 24px;
       box-sizing: border-box;
+    
+      /* stop any sideways scroll pushing the card off-screen */
+      overflow-x: hidden;
     }
     .card {
       width: 100%;
