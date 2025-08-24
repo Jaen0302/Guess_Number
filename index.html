@@ -40,9 +40,12 @@
                   radial-gradient(1200px 800px at 110% 10%, var(--bg2), transparent 60%),
                   linear-gradient(120deg, #0ea5e92a, #8b5cf62a);
       background-attachment: fixed;
-      display: grid;
-      place-items: center;
-      padding: 24px;
+      display: flex;
+      justify-content: center;     /* center horizontally */
+      align-items: flex-start;     /* align to top instead of full center */
+      padding: 60px 24px 40px;     /* add more breathing space from top/bottom */
+      min-height: 100vh;           /* ensure full screen height */
+      box-sizing: border-box;
     }
     .card {
       width: 100%;
